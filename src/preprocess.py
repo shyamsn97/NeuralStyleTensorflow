@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 
 def load_and_scale(directory,size=128,mean=np.array([0.0, 0.0, 0.0]),
 					std=np.array([1.0, 1.0, 1.0])):
+    '''
+        Loads, resizes, and scales image by mean and standard deviation vectors
+    '''
     img = cv2.imread(directory)
     img = cv2.resize(img,(size,size))
     img = np.clip(img,0,255)

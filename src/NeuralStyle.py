@@ -4,13 +4,15 @@ from tqdm import tqdm
 from .create_model import create_vgg
 
 class NeuralStyle():
-    
+    '''
+        Neural Style algorithm adapted from the paper "A Neural Algorithm of Artistic Style", Implemented with Tensorflow
+        Neural Style object
+        Parameters:
+            inputs: takes in an input image
+            data_dict: dictionary of layers and weights from vgg19        
+    '''
     def __init__(self,input_image):
         tf.reset_default_graph()
-        self.outputs = None
-        self.dict = None
-        self.model_style_layers = None
-        self.model_content_layers = None
         self.data_dict = create_vgg(include_pool=True,input_img=input_image)
         print(self.data_dict.keys())
     

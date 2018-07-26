@@ -1,9 +1,10 @@
 import numpy as np
 import tensorflow as tf
 
-
-def create_conv(data_dict,prev_layer,model_layer,model_num):
-    
+def create_conv(data_dict,prev_layer,model_layer,model_num):      
+    '''
+        Creates a convolutional layer from the pretrained vgg network
+    '''
     weights = model_layer.get_weights()
     data_dict["conv" + str(model_num)] = \
         tf.layers.conv2d(
@@ -30,7 +31,9 @@ def create_conv(data_dict,prev_layer,model_layer,model_num):
     return "conv" + str(model_num)
         
 def create_max_pool(data_dict,prev_layer,model_layer,model_num):
-    
+    '''
+        Creates a max pool layer from the pretrained vgg network
+    '''    
     data_dict["pool" + str(model_num)] = \
         tf.layers.max_pooling2d(
             inputs=prev_layer,
@@ -43,7 +46,9 @@ def create_max_pool(data_dict,prev_layer,model_layer,model_num):
     return "pool" + str(model_num)
     
 def create_vgg(include_pool,input_img):
-    
+    '''
+        Creates a dictionary of tensorflow layers, copied from a pretrained VGG19 network
+    '''
     vgg = tf.keras.applications.vgg19.VGG19(include_top=False, weights='imagenet', input_tensor=None, input_shape=None, pooling=None, classes=1000)
     print(vgg.summary())
     data_dict = {}
