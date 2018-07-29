@@ -3,7 +3,7 @@ import cv2
 import matplotlib.pyplot as plt
 
 def load_and_scale(directory,size=128,mean=np.array([0.0, 0.0, 0.0]),
-					std=np.array([1.0, 1.0, 1.0])):
+					std=np.array([1.0, 1.0, 1.0], dtype=np.float32)):
     '''
         Loads, resizes, and scales image by mean and standard deviation vectors
     '''
@@ -14,7 +14,8 @@ def load_and_scale(directory,size=128,mean=np.array([0.0, 0.0, 0.0]),
     img = cv2.resize(img,(size,size)) 
     img = img.astype('float32')
     # Subtract the mean values
-    img -= np.array([123.68, 116.779, 103.939], dtype=np.float32)
+    img -= mean
+    img /= std
     img = img.reshape(1,size,size,3)
     return img
 
