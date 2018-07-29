@@ -3,11 +3,11 @@
 ## Neural Style algorthim, as introduced in ["A Neural Algorithm of Artistic Style"](https://arxiv.org/abs/1508.06576), implemented in tensorflow
 
 ## Examples:
-	Turtle			       |	Picasso-guitar		   		 |	Mixed 
+	Turtle			       |	Picasso-guitar		   		 |	Mixed 									 |
 :-------------------------:|:-------------------------------:|:------------------------------------------:
 ![](images/turtle.jpg)     |![](images/picasso-guitar.jpg) 	 |![](images/picasso-guitar-turtle.jpg)
 
-	Dancer			       |	Picasso		   		 		 |	Mixed 
+	Dancer			       |	Picasso		   		 		 |	Mixed 									 |
 :-------------------------:|:-------------------------------:|:------------------------------------------:
 ![](images/dancing.jpg)    |![](images/picasso.jpg) 	 	 |![](images/picasso-dancing.jpg)
 
