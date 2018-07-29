@@ -7,6 +7,7 @@
 | :---:         |     :---:      |          :---: |
 | ![](images/turtle.jpg)  | ![](images/picasso-guitar.jpg)    | ![](images/picasso-guitar-turtle.jpg)    |
 | ![](images/dancing.jpg)      | ![](images/picasso.jpg)        | ![](images/picasso-dancing.jpg)       |
+| ![](images/doggo.jpg)      | ![](images/wave.jpg)        | ![](images/doggo-wave.jpg)       |
 
 
 ## How to use:

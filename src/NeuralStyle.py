@@ -56,7 +56,7 @@ class NeuralStyle():
     def stylize(self,input_img,content_img,style_img,
                      style_layerlist = ["block1_conv1","block2_conv1","block3_conv1","block4_conv1","block5_conv1"],
                      content_layerlist = ["block4_conv1"],
-                     style_weight = 1e4, content_weight = 1e0,tv_weight=1e-4,epochs=500):
+                     style_weight = 1e5, content_weight = 1e0,tv_weight=1e-4,epochs=500):
         """
             Main style function
                 Parameters:
@@ -94,7 +94,7 @@ class NeuralStyle():
                 sess.run(training_op)
             
             final = np.squeeze(sess.run(self.data_dict["input_image"]))
-            print("L2 distance between original and generated images: " + str(np.linalg.norm(final - orig)))
+            print("L2 distance between original and generated image: " + str(np.linalg.norm(final - orig)))
             return final
 
 
