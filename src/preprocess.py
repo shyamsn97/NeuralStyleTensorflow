@@ -7,13 +7,16 @@ def load_and_scale(directory,size=128,mean=np.array([0.0, 0.0, 0.0]),
     '''
         Loads, resizes, and scales image by mean and standard deviation vectors
     '''
-    img = cv2.imread(directory)
-    img = cv2.resize(img,(size,size))
-    img = np.clip(img,0,255)
-    img = img/255.0
-    img = (img - mean)/std
+    if directory == None:
+        img = np.random.uniform(size=(size,size,3))
+    else:
+        img = cv2.imread(directory)
+    img = cv2.resize(img,(size,size)) 
+    img = img.astype('float32')
+    # Subtract the mean values
+    img -= np.array([123.68, 116.779, 103.939], dtype=np.float32)
     img = img.reshape(1,size,size,3)
-    return np.clip(img,0,1)
+    return img
 
 if __name__ == "__main__":
 	img = load_and_scale("images/dancing.jpg",128,np.array([0.0, 0.0, 0.0]),

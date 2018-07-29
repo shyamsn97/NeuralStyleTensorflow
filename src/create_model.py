@@ -1,73 +1,56 @@
 import numpy as np
 import tensorflow as tf
+import os
+import h5py
 
-def create_conv(data_dict,prev_layer,model_layer,model_num):      
+def create_conv(data_dict,prev_layer,name,weights):      
     '''
         Creates a convolutional layer from the pretrained vgg network
     '''
-    weights = model_layer.get_weights()
-    data_dict["conv" + str(model_num)] = \
-        tf.layers.conv2d(
-            inputs=prev_layer,
-            filters=model_layer.filters,
-            kernel_size=model_layer.kernel_size,
-            strides=model_layer.strides,
-            padding=model_layer.padding,
-            data_format=model_layer.data_format,
-            dilation_rate=model_layer.dilation_rate,
-            activation=model_layer.activation,
-            use_bias=model_layer.use_bias,
-            kernel_initializer= tf.constant_initializer(weights[0]),
-            bias_initializer= tf.constant_initializer(weights[1]),
-            kernel_regularizer=model_layer.kernel_regularizer,
-            bias_regularizer=model_layer.bias_regularizer,
-            activity_regularizer=model_layer.activity_regularizer,
-            kernel_constraint=model_layer.kernel_constraint,
-            bias_constraint=model_layer.bias_constraint,
-            trainable=False,
-            name="conv" + str(model_num),
-            reuse=None  
-        )
-    return "conv" + str(model_num)
+    W = weights[0]
+    b = weights[1]
+    data_dict[name] = tf.nn.relu(tf.nn.conv2d(prev_layer, W, [1, 1, 1, 1], 'SAME') + b)
+    return name
         
-def create_max_pool(data_dict,prev_layer,model_layer,model_num):
+def create_avg_pool(data_dict,prev_layer,name):
     '''
-        Creates a max pool layer from the pretrained vgg network
+        Creates an avg pool layer from the pretrained vgg network
     '''    
-    data_dict["pool" + str(model_num)] = \
-        tf.layers.max_pooling2d(
-            inputs=prev_layer,
-            pool_size=model_layer.pool_size,
-            strides=model_layer.strides,
-            padding=model_layer.padding,
-            data_format=model_layer.data_format,
-            name="pool" + str(model_num)
-        )
-    return "pool" + str(model_num)
+    data_dict[name] = tf.nn.avg_pool(prev_layer, [1, 2, 2, 1], [1, 2, 2, 1], 'SAME')
+    return name
     
 def create_vgg(include_pool,input_img):
     '''
         Creates a dictionary of tensorflow layers, copied from a pretrained VGG19 network
     '''
-    vgg = tf.keras.applications.vgg19.VGG19(include_top=False, weights='imagenet', input_tensor=None, input_shape=None, pooling=None, classes=1000)
-    print(vgg.summary())
+    vgg = tf.keras.applications.vgg19.VGG19(include_top=False, weights='imagenet')
+    layer_names = [lay.name for lay in vgg.layers][1:]
+    if os.path.isfile("vggweights.h5") == False:
+        print("Creating .h5 weights file...")
+        create_file(vgg)
     data_dict = {}
-    data_dict["input_image"] = tf.Variable(initial_value=input_img.astype("float32"),name="input_image")
-    data_dict["input_placeholder"] = tf.placeholder(tf.float32,shape=data_dict["input_image"].shape)
-    data_dict["assign_op"] = data_dict["input_image"].assign(data_dict["input_placeholder"])
-    
-    layers = vgg.layers
-    prev_name = create_conv(data_dict,data_dict["input_image"],layers[1],1)
-    layers = vgg.layers[2:]
-    conv_num = 2
-    max_num = 1
-    
-    for layer in layers:
-        if layer.name.find("conv") != -1:
-            prev_name = create_conv(data_dict,data_dict[prev_name],layer,conv_num)
-            conv_num += 1
-        elif np.all(layer.name.find("pool") != -1) and np.all(include_pool == True):
-            prev_name = create_max_pool(data_dict,data_dict[prev_name],layer,max_num)
-            max_num += 1
+    data_dict["input_image"] = tf.Variable(input_img.astype("float32"),name="input_image")
+    prev_name = "input_image"
+    for layer_name in layer_names:
+        with h5py.File('vggweights.h5','r') as hf:
+            if layer_name.find("conv") != -1:
+                weights = []
+                weights.append(hf[layer_name + "/kernel"][:])
+                weights.append(hf[layer_name + "/bias"][:])
+                prev_name = create_conv(data_dict,data_dict[prev_name],layer_name,weights)
+            elif np.all(layer_name.find("pool") != -1) and np.all(include_pool == True):
+                prev_name = create_avg_pool(data_dict,data_dict[prev_name],layer_name)
             
     return data_dict
+
+def create_file(vgg):
+    layer_names = [lay.name for lay in vgg.layers][1:]
+    with h5py.File('vggweights.h5','w') as hf:
+        for layer_name in layer_names:
+            if layer_name.find("conv") != -1:
+                weights = vgg.get_layer(layer_name).get_weights()
+                hf.create_dataset(layer_name + "/kernel",data=weights[0]) 
+                hf.create_dataset(layer_name + "/bias",data=weights[1])
+
+
+

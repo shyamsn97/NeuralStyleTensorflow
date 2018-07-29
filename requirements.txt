@@ -1,6 +1,8 @@
 tensorflow
+keras
 numpy
 matplotlib
 argparse
 opencv-python
 tqdm
+h5py

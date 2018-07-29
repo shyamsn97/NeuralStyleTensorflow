@@ -10,8 +10,8 @@ parser = argparse.ArgumentParser( #help
 	'''
 	Neural Style algorithm adapted from the paper "A Neural Algorithm of Artistic Style", Implemented with Tensorflow
 	Usage:
-		Use an input image: python neural_style.py [input image path] [content image path] [style image path] [size of images (a single number)] [epochs]
-		Use a white noise image: python neural_style.py "white" [content image path] [style image path] [size of images (a single number)] [epochs]
+		Use an input image: python neural_style.py [input image path] [content image path] [style image path] [size of images (a single number)] [epochs] [output filename]
+		Use a white noise image: python neural_style.py "white" [content image path] [style image path] [size of images (a single number)] [epochs] [output filename]
 	'''
 )
 
@@ -19,8 +19,8 @@ parser.add_argument("arguments",nargs = "*")
 args = parser.parse_args()
 
 arguments = args.arguments
-
-assert (len(arguments) == 4), "Needs 5 arguments, see -h for more info"
+print(arguments)
+assert (len(arguments) == 6), "Needs 6 arguments, see -h for more info"
 
 from src import preprocess
 from src.NeuralStyle import NeuralStyle 
@@ -35,18 +35,18 @@ style_image_path = arguments[2]
 size = int(arguments[3])
 epochs = int(arguments[4])
 
-input_img = preprocess.load_and_scale(input_image_path,size,np.array([0.0, 0.0, 0.0]),
+input_img = preprocess.load_and_scale(input_image_path,size,np.array([123.68, 116.779, 103.939], dtype=np.float32),
                      np.array([1.0, 1.0, 1.0]))
-content_img = preprocess.load_and_scale(input_image_path,size,np.array([0.0, 0.0, 0.0]),
+content_img = preprocess.load_and_scale(content_image_path,size,np.array([123.68, 116.779, 103.939], dtype=np.float32),
                      np.array([1.0, 1.0, 1.0]))
-style_img = preprocess.load_and_scale(input_image_path,size,np.array([0.0, 0.0, 0.0]),
+style_img = preprocess.load_and_scale(style_image_path,size,np.array([123.68, 116.779, 103.939], dtype=np.float32),
                      np.array([1.0, 1.0, 1.0]))
 
 ns = NeuralStyle(input_img)
-mixed_image = ns.stylize(input_img,content_img,style_img,epochs=epochs)
-
-cv2.imwrite("images/mixed_image.png",np.squeeze(mixed_image))
+mixed_image = ns.stylize(input_img,content_img,style_img,epochs=epochs) + np.array([123.68, 116.779, 103.939], dtype=np.float32)
+mixed_image = np.clip(mixed_image,0,255)
+cv2.imwrite(arguments[5],np.squeeze(mixed_image))
 plt.figure()
-plt.imshow(np.squeeze(mixed_image))
+plt.imshow(mixed_image.astype('int'))
 plt.show()
 
