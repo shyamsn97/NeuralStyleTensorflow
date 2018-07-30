@@ -3,7 +3,7 @@
 ## Neural Style algorthim, as introduced in ["A Neural Algorithm of Artistic Style"](https://arxiv.org/abs/1508.06576), implemented in tensorflow
 
 ## Examples:
-| Input/Content image | Style Image | Mixed |
+| Input/Content Image | Style Image | Mixed Image|
 | :---:         |     :---:      |          :---: |
 | ![](images/turtle.jpg)  | ![](images/picasso-guitar.jpg)    | ![](images/picasso-guitar-turtle.jpg)    |
 | ![](images/dancing.jpg)      | ![](images/picasso.jpg)        | ![](images/picasso-dancing.jpg)       |
