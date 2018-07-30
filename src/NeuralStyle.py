@@ -72,7 +72,7 @@ class NeuralStyle():
         content_img = tf.constant(content_img, dtype=tf.float32, name='content_img')
         style_img = tf.constant(style_img, dtype=tf.float32, name='content_img')
 
-        optimizer = tf.train.AdamOptimizer(learning_rate=1)
+        optimizer = tf.train.AdamOptimizer(learning_rate=1,epsilon=1e-1)
         with tf.Session() as sess:
             loss = self.content_loss(sess,
                                      content_img,
